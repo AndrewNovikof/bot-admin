@@ -63,7 +63,7 @@
                             <span class="block text-blue-600 xl:inline">Telegram bots</span>
                         </h1>
                         <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                            Just create a new bot via <span class="text-blue-600">@BotFather</span> in the telegram. Use received token for adding the bot here. Add the bot to the telegram chats, where you want him to write, and use chat IDs for creating chats here. Create messages and schedule them to be sent to created chats in any time.
+                            Just create a new bot via <span class="text-blue-600">@BotFather</span> in the telegram. Use received token for adding the bot here. Add the bot to the telegram chats, where you want him to write, and use chat IDs for creating chats here. Create messages and schedule them to be sent to the created chats in any time.
                         </p>
                         <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                             <div class="rounded-md shadow">
