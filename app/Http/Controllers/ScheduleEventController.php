@@ -6,30 +6,31 @@ use App\Http\Requests\StoreScheduleEventReuest;
 use App\Models\Bot;
 use App\Models\ScheduleEvent;
 use App\Services\BotService;
+use App\Services\CronExpressionService;
 use Cron\CronExpression;
-use Illuminate\Console\Scheduling\ManagesFrequencies;
 use Illuminate\Http\RedirectResponse;
 
 class ScheduleEventController extends Controller
 {
-    use ManagesFrequencies;
-
     /**
+     * The service for execute telegram commands
+     *
      * @var BotService $botService
      */
     protected $botService;
 
     /**
-     * The cron expression representing the event's frequency.
+     * The service for working with cron expression
      *
-     * @var string
+     * @var CronExpressionService $cronExpressionService
      */
-    public $expression = '* * * * *';
+    protected $cronExpressionService;
 
-    public function __construct(BotService $botService)
+    public function __construct(BotService $botService, CronExpressionService $cronExpressionService)
     {
         $this->authorizeResource(ScheduleEvent::class, 'scheduleEvent');
         $this->botService = $botService;
+        $this->cronExpressionService = $cronExpressionService;
     }
 
     /**
@@ -43,44 +44,10 @@ class ScheduleEventController extends Controller
     public function store(StoreScheduleEventReuest $request, Bot $bot): RedirectResponse
     {
         $settings = $request->validated()['settings'];
-        $preparedArray = $this->handleCronSettings($settings, null);
+        $preparedArray = $this->cronExpressionService->handleCronSettings($settings, null);
         $event = $bot->scheduleEvents()->create(array_merge($request->validated(), $preparedArray));
         return redirect()->route('bots.show', [$bot]);
     }
-
-    /**
-     * @param array $settings
-     * @return array
-     * @throws \Exception
-     */
-    protected function handleCronSettings(array $settings, $cronExp): array
-    {
-        $cronExpression = $cronExp ?? $this->getCronExpression($settings);
-        $expressionClass = new CronExpression($cronExpression);
-        $nexDueDate = $expressionClass->getNextRunDate('now', 0, false, $settings['timezone']['values'][0] ?? 'Europe/Moscow');
-        return [
-            'cron_expression' => $cronExpression,
-            'next_due_date' => $nexDueDate
-        ];
-    }
-
-    /**
-     * @param array $settings
-     * @return string
-     */
-    protected function getCronExpression(array $settings): string
-    {
-        $checkedSettings = array_filter($settings, function ($setting) {
-            return $setting['checked'] ?? false;
-        });
-        foreach ($checkedSettings as $key => $setting) {
-            if (method_exists($this, $key)) {
-                call_user_func_array([$this, $key], $setting['values'] ?? []);
-            }
-        }
-        return $this->expression;
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -93,7 +60,7 @@ class ScheduleEventController extends Controller
     public function update(StoreScheduleEventReuest $request, Bot $bot, ScheduleEvent $scheduleEvent): RedirectResponse
     {
         $settings = $request->validated()['settings'];
-        $preparedArray = $this->handleCronSettings($settings, $request->cron_expression);
+        $preparedArray = $this->cronExpressionService->handleCronSettings($settings, $request->cron_expression);
         $scheduleEvent->update(array_merge($request->validated(), $preparedArray));
         return redirect()->route('bots.show', [$bot]);
     }
