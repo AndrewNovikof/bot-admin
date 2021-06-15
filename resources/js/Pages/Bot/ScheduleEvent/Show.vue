@@ -618,7 +618,7 @@ export default {
         },
 
         callScheduleEvent() {
-            this.form.delete(route('bots.scheduleEvents.call', [this.$props.bot, this.scheduleEvent]), {
+            this.form.post(route('bots.scheduleEvents.call', [this.$props.bot, this.scheduleEvent]), {
                 errorBag: 'callScheduleEvent',
                 preserveScroll: true,
                 onSuccess: () => this.closeModal(),

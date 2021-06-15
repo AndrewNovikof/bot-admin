@@ -54,7 +54,7 @@ Route::middleware(['auth:sanctum', 'verified'])->name('bots.')->prefix('bots')->
         Route::post('/', [ScheduleEventController::class, 'store'])->name('store');
         Route::put('{scheduleEvent}', [ScheduleEventController::class, 'update'])->name('update');
         Route::delete('{scheduleEvent}', [ScheduleEventController::class, 'destroy'])->name('destroy');
-        Route::delete('{scheduleEvent}', [ScheduleEventController::class, 'call'])->name('call');
+        Route::post('{scheduleEvent}/call', [ScheduleEventController::class, 'call'])->name('call');
     });
 });
 
