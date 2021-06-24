@@ -48,13 +48,24 @@ class BotService
     {
         try {
             $telegramBot = new Api($bot->token);
+            $realChatId = null;
             $response = $telegramBot->sendChatAction([
                 'chat_id' => $chat->real_chat_id,
                 'action' => 'typing'
             ]);
+            if ($response === true && preg_match('/^@/', $chat->real_chat_id) === 1) {
+                $messageResponse = $telegramBot->sendMessage([
+                    'chat_id' => $chat->real_chat_id,
+                    'text' => 'BotScheduler connection completed successfully',
+                    'parse_mode' => 'HTML',
+                ]);
+                $realChatId = $messageResponse->chat->id;
+            }
+
             $chat->update([
                 'is_available' => true,
                 'last_check_at' => Carbon::now(),
+                'real_chat_id' => $realChatId ?? $chat->real_chat_id
             ]);
             return $response;
         } catch (\Exception $exception) {
@@ -73,7 +84,7 @@ class BotService
             $telegramBot = new Api($scheduleEvent->bot->token);
             $response = $telegramBot->sendMessage([
                 'chat_id' => $scheduleEvent->chat->real_chat_id,
-                'text' =>  $scheduleEvent->message->text,
+                'text' => $scheduleEvent->message->text,
                 'parse_mode' => $scheduleEvent->message->parse_mode,
                 'disable_web_page_preview' => $scheduleEvent->message->disable_web_page_preview,
                 'disable_notification' => $scheduleEvent->message->disable_notification,
