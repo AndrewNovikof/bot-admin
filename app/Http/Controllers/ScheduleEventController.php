@@ -44,7 +44,7 @@ class ScheduleEventController extends Controller
     public function store(StoreScheduleEventReuest $request, Bot $bot): RedirectResponse
     {
         $settings = $request->validated()['settings'];
-        $preparedArray = $this->cronExpressionService->handleCronSettings($settings, null);
+        $preparedArray = $this->cronExpressionService->handleCronSettings($settings, null, true);
         $event = $bot->scheduleEvents()->create(array_merge($request->validated(), $preparedArray));
         return redirect()->route('bots.show', [$bot]);
     }
@@ -60,7 +60,7 @@ class ScheduleEventController extends Controller
     public function update(StoreScheduleEventReuest $request, Bot $bot, ScheduleEvent $scheduleEvent): RedirectResponse
     {
         $settings = $request->validated()['settings'];
-        $preparedArray = $this->cronExpressionService->handleCronSettings($settings, $request->cron_expression);
+        $preparedArray = $this->cronExpressionService->handleCronSettings($settings, $request->cron_expression, true);
         $scheduleEvent->update(array_merge($request->validated(), $preparedArray));
         return redirect()->route('bots.show', [$bot]);
     }

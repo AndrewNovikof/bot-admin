@@ -62,7 +62,7 @@ class HandleScheduleEvents extends Command
             $events->map(function ($event) {
                 try {
                     $this->botService->sendMessage($event);
-                    $event->next_due_date = $this->cronExpressionService->getNexDueDate($event->cron_expression);
+                    $event->next_due_date = $this->cronExpressionService->getNexDueDate($event->cron_expression, $event->settings);
                     $event->save();
                 } catch (\Exception $exception) {
                     $event->is_available = false;

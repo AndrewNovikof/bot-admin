@@ -25,7 +25,7 @@ class CronExpressionService
     public function handleCronSettings(array $settings, $cronExp): array
     {
         $cronExpression = $cronExp ?? $this->getCronExpression($settings);
-        $nexDueDate = $this->getNexDueDate($cronExpression);
+        $nexDueDate = $this->getNexDueDate($cronExpression, $settings, true);
         return [
             'cron_expression' => $cronExpression,
             'next_due_date' => $nexDueDate
@@ -34,13 +34,26 @@ class CronExpressionService
 
     /**
      * @param string $cronExpression
+     * @param array $settings
+     * @param bool $isHumanEdit
      * @return \DateTime
      * @throws \Exception
      */
-    public function getNexDueDate(string $cronExpression)
+    public function getNexDueDate(string $cronExpression, array $settings, bool $isHumanEdit = false): \DateTime
     {
         $expressionClass = new CronExpression($cronExpression);
-        return $expressionClass->getNextRunDate('now', 0, false, $settings['timezone']['values'][0] ?? 'Europe/Moscow');
+        $timeZone = $settings['timezone']['values'][0] ?? 'Europe/Moscow';
+        $nth = 0;
+        if ($settings['frequency']['checked'] ?? false) {
+            if ($isHumanEdit) {
+                $nth = $settings['frequency']['values'][1];
+            } else {
+                $nth = (int)$settings['frequency']['values'][0] - 1;
+            }
+            $nth = $nth > 0 ? $nth : 0;
+        }
+
+        return $expressionClass->getNextRunDate('now', $nth, false, $timeZone);
     }
 
     /**

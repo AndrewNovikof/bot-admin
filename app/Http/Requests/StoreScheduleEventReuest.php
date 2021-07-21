@@ -63,6 +63,9 @@ class StoreScheduleEventReuest extends FormRequest
             'settings.thursdays.checked' => 'boolean',
             'settings.fridays.checked' => 'boolean',
             'settings.saturdays.checked' => 'boolean',
+            'settings.frequency.checked' => 'boolean',
+            'settings.frequency.values.0' => 'integer|nullable|min:1',
+            'settings.frequency.values.1' => 'integer|nullable',
         ];
     }
 }

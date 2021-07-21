@@ -38,13 +38,14 @@
 
                     <div class="col-span-6 sm:col-span-4 mb-3">
                         <jet-label for="name" value="Name"/>
-                        <jet-input id="name" @change="setIsFormSaved(false)" type="text" class="mt-1 block w-full" v-model="form.name" autofocus/>
+                        <jet-input id="name" @change="setIsFormSaved(false)" type="text" class="mt-1 block w-full"
+                                   v-model="form.name" autofocus/>
                         <jet-input-error :message="form.errors.name" class="mt-2"/>
                     </div>
 
                     <div class="col-span-6 sm:col-span-4 mb-3">
                         <label for="chat_id" class="block text-sm font-medium text-gray-700">Chat</label>
-                        <select id="chat_id"  @change="setIsFormSaved(false)" v-model="form.chat_id" name="chat_id"
+                        <select id="chat_id" @change="setIsFormSaved(false)" v-model="form.chat_id" name="chat_id"
                                 class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full">
                             <option v-for="chat in bot.chats" :value="chat.id" :disabled="chat.is_available !== true"
                                     :key="chat.id">{{ chat.name }}
@@ -55,7 +56,8 @@
 
                     <div class="col-span-6 sm:col-span-4 mb-3">
                         <label for="message_id" class="block text-sm font-medium text-gray-700">Message</label>
-                        <select id="message_id" @change="setIsFormSaved(false)" v-model="form.message_id" name="message_id"
+                        <select id="message_id" @change="setIsFormSaved(false)" v-model="form.message_id"
+                                name="message_id"
                                 class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full">
                             <option v-for="message in bot.messages" :value="message.id" :key="message.id">
                                 {{ message.name }}
@@ -66,7 +68,8 @@
 
                     <div class="col-span-6 sm:col-span-4 mb-3">
                         <label for="timezone" class="block text-sm font-medium text-gray-700">Timezone</label>
-                        <select id="timezone" @change="setIsFormSaved(false)" v-model="form.settings.timezone.values[0]" name="timezone"
+                        <select id="timezone" @change="setIsFormSaved(false)" v-model="form.settings.timezone.values[0]"
+                                name="timezone"
                                 class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full">
                             <option v-for="timezone in timezones" :value="timezone.tzCode" :key="timezone.tzCode">
                                 {{ timezone.label }}
@@ -405,6 +408,33 @@
                         </label>
                         <jet-input-error :message="form.errors['settings.saturdays.checked']" class="mt-2"/>
                     </div>
+
+                    <div class="p-4 mx-auto bg-white rounded-xl shadow-md mb-3" v-if="form.settings.frequency">
+                        <label class="flex items-center space-x-3">
+                            <input type="checkbox" v-model="form.settings.frequency.checked" name="frequency"
+                                   @change="setIsFormSaved(false)" value="true"
+                                   class="form-tick appearance-none h-6 w-6 border border-gray-300 rounded-md checked:bg-blue-600 checked:border-transparent focus:outline-none">
+                            <span class="text-gray-900 font-medium">Limit sending the message only every <span
+                                class="text-red-700">{{
+                                    form.settings.frequency.values[0] || 0
+                                }}-th</span> time. <span v-if="form.settings.frequency.values[1] > 0 && !form.cron_expression">Next sending will be after next <span class="text-red-700">{{
+                                    form.settings.frequency.values[1]
+                                }}</span> times</span>
+                                <span v-if="form.settings.frequency.values[1] <= 0 || form.cron_expression">Next sending will be next time</span>
+                            </span>
+                            <div>
+                                <jet-input id="frequencyValue1" type="number" max="60" min="1"
+                                           class="mt-1 block w-full disabled:opacity-20"
+                                           :disabled="form.settings.frequency.checked !== true"
+                                           v-model="form.settings.frequency.values[0]"/>
+                                <jet-input id="frequencyValue2" type="number" max="60" min="0"
+                                           class="mt-1 block w-full disabled:opacity-20"
+                                           :disabled="form.settings.frequency.checked !== true"
+                                           v-model="form.settings.frequency.values[1]"/>
+                            </div>
+                        </label>
+                        <jet-input-error :message="form.errors['settings.frequency.checked']" class="mt-2"/>
+                    </div>
                 </template>
 
                 <template #footer>
@@ -418,7 +448,8 @@
                     </jet-danger-button>
 
                     <jet-success-button v-if="scheduleEvent.id" class="ml-2 mb-2" @click="callScheduleEvent"
-                                        :class="{ 'opacity-25': form.processing }" :disabled="form.processing || !isFormSaved">
+                                        :class="{ 'opacity-25': form.processing }"
+                                        :disabled="form.processing || !isFormSaved">
                         Test
                     </jet-success-button>
 
@@ -538,6 +569,10 @@ const default_settings = {
     },
     saturdays: {
         checked: false
+    },
+    frequency: {
+        checked: false,
+        values: [1, 1]
     }
 };
 
