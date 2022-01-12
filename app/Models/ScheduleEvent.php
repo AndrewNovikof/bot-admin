@@ -17,7 +17,7 @@ class ScheduleEvent extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'is_available', 'chat_id', 'message_id', 'cron_expression', 'settings', 'next_due_date', 'last_error_message'
+        'name', 'is_available', 'chat_id', 'message_id', 'cron_expression', 'settings', 'next_due_date', 'last_error_message', 'is_enabled'
     ];
 
     /**
@@ -27,6 +27,7 @@ class ScheduleEvent extends Model
      */
     protected $casts = [
         'is_available' => 'boolean',
+        'is_enabled' => 'boolean',
         'settings' => 'array',
     ];
 

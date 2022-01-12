@@ -57,7 +57,9 @@ class HandleScheduleEvents extends Command
      */
     public function handle()
     {
-        $events = ScheduleEvent::where('next_due_date', Carbon::now()->toDateTimeString('minutes'))->get();
+        $events = ScheduleEvent::where(
+            'next_due_date', Carbon::now()->toDateTimeString('minutes')
+        )->whereIsEnabled(true)->get();
         if ($events) {
             $events->map(function ($event) {
                 try {

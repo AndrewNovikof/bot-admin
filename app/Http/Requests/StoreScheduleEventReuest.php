@@ -27,6 +27,7 @@ class StoreScheduleEventReuest extends FormRequest
             'name' => 'required|string',
             'chat_id' => 'required|integer|exists:chats,id',
             'message_id' => 'required|integer|exists:messages,id',
+            'is_enabled' => 'required|boolean',
             'cron_expression' => ['nullable', 'regex:/(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*|\/) ?){5,7})/'],
             'settings.timezone.values.0' => 'required|string',
             'settings.monthlyOn.checked' => 'boolean',
