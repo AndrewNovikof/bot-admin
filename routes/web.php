@@ -43,7 +43,7 @@ Route::middleware(['auth:sanctum', 'verified'])->name('bots.')->prefix('bots')->
         Route::post('/', [ChatController::class, 'store'])->name('store');
         Route::put('{chat}', [ChatController::class, 'update'])->name('update');
         Route::delete('{chat}', [ChatController::class, 'destroy'])->name('destroy');
-        Route::delete('{chat}', [ChatController::class, 'call'])->name('call');
+        Route::post('{chat}', [ChatController::class, 'call'])->name('call');
     });
     Route::name('messages.')->prefix('{bot}/messages')->group(function() {
         Route::post('/', [MessageController::class, 'store'])->name('store');

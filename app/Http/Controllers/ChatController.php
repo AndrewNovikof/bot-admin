@@ -20,13 +20,10 @@ class ChatController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param StoreChatRequest $request
-     * @param Bot $bot
-     * @return RedirectResponse
      */
     public function store(StoreChatRequest $request, Bot $bot): RedirectResponse
     {
+        /** @var Chat $chat */
         $chat = $bot->chats()->create($request->validated());
         $this->botService->sendChatAction($bot, $chat);
         return redirect()->route('bots.show', [$bot]);
@@ -34,11 +31,6 @@ class ChatController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param StoreChatRequest $request
-     * @param Chat $chat
-     * @param Bot $bot
-     * @return RedirectResponse
      */
     public function update(StoreChatRequest $request, Bot $bot, Chat $chat): RedirectResponse
     {
@@ -49,12 +41,8 @@ class ChatController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param Chat $chat
-     * @param Bot $bot
-     * @return RedirectResponse
      */
-    public function destroy(Bot $bot, Chat $chat)
+    public function destroy(Bot $bot, Chat $chat): RedirectResponse
     {
         $chat->delete();
         return redirect()->route('bots.show', [$bot]);
@@ -62,14 +50,9 @@ class ChatController extends Controller
 
     /**
      * Send chat action.
-     *
-     * @param Chat $chat
-     * @param Bot $bot
-     * @return RedirectResponse
      */
-    public function call(Bot $bot, Chat $chat)
+    public function call(Bot $bot, Chat $chat): RedirectResponse
     {
-
         $this->botService->sendChatAction($bot, $chat);
         return redirect()->route('bots.show', [$bot]);
     }
