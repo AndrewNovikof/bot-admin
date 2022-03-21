@@ -157,7 +157,7 @@ export default {
         },
 
         callAction() {
-            this.form.delete(route('bots.chats.call', [this.$props.bot, this.chat]), {
+            this.form.post(route('bots.chats.call', [this.$props.bot, this.chat]), {
                 errorBag: 'callChat',
                 preserveScroll: true,
                 onSuccess: () => this.closeModal(),
